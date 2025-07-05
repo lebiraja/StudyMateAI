@@ -1,0 +1,4 @@
+REVISION 1
+
+Study and write this questions.1.Compare and contrast the use cases for AWS Redshift, Amazon S3, and AWS Glue in a data warehousing scenario. 
+2.How would you implement a data pipeline on Google Cloud Platform to process large-scale streaming data using Pub/Sub and Dataflow?

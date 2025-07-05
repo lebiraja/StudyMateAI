@@ -1,0 +1,3 @@
+Module 6- Assignment
+
+Write and submit the AssignmentDefine Ingestion and explain the data sharing techniques.

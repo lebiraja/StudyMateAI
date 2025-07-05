@@ -1,0 +1,5 @@
+Data Engineering Life Cycle
+
+Write Assignment, on the topic of Data Engineering Life Cycle, Include all the five stages and explain the five stages. 
+
+Complete it and upload the document in GCR on or before Wednesday 18-12-24.

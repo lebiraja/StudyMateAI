@@ -1,0 +1,12 @@
+Test
+
+Test  26-03-25 
+Study the discussed topics for Test
+1. Data Cleaning
+2. Need for Data Cleaning
+3.Converting Date syntax
+4. Techniques for Handling Missing data
+5.Factors affecting data refactoring
+6.Method for dropping column
+7. Timezone refractoring
+Attendance will be based on the test performance.

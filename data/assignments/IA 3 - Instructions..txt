@@ -1,0 +1,53 @@
+IA 3 - Instructions.
+
+
+
+I.  Online
+certification completion  10 Marks
+
+
+ 
+
+
+The students are
+asked to enroll in the following certification course and mark will be awarded
+for the 100% completion of the course.
+
+
+ 
+
+
+1." Exploratory Data Analysis " by Infosys
+Springboard [7 hours,13 Minutes]  
+
+
+https://infyspringboard.onwingspan.com/web/en/app/toc/lex_auth_012666909428129792728_shared/overview
+
+
+ 
+
+
+2. “Simple
+Descriptive Statistics” , by Infosys Springboard [1 hours,10
+Minutes] 
+
+
+https://infyspringboard.onwingspan.com/web/en/app/toc/lex_auth_01350158584830361611485/overview
+
+
+ 
+
+
+3. “Analysing the Quality of White Wines
+using NumPy Python” , by Infosys Springboard [2 hours,12 Minutes] 
+https://infyspringboard.onwingspan.com/web/en/app/toc/lex_auth_01384209199760179212059_shared/overview
+
+
+II. PROJECT.
+The students are expected to
+develop a GUI based application for a case study related to food, water, health and energy and they are evaluated
+based on the following rubrics.
+
+
+Complete the project by 03-04-2025. Viva will be held during Internal 3 dates.
+

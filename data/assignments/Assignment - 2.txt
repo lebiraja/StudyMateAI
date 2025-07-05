@@ -1,0 +1,10 @@
+Assignment - 2
+
+Find the difference between Charts and Graphs
+Analyze in which situation 
+Histograms
+Scatter plots
+Box plots
+Heatmaps
+Pie charts
+these visualization techniques are used?

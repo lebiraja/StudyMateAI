@@ -1,0 +1,8 @@
+QA 1
+
+Submit the QA task which is discussed in class (both hard and soft copy).
+
+Soft copy : Execute the code and post the output- screenshot.
+Hardcopy: Write your code and submit.
+
+Deadline : As this QA was given 10 days back, submit by today 7.00 P.M

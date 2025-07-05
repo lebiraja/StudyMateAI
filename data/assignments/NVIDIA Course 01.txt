@@ -1,0 +1,3 @@
+NVIDIA Course 01
+
+Complete "Getting Started with AI on Jetson Nano" course and upload your certificate.

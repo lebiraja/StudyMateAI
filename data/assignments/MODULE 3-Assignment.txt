@@ -1,0 +1,3 @@
+MODULE 3-Assignment
+
+Select a company (e.g., Netflix, Amazon, Google) and analyze how they design for scalability and failure.What technologies and strategies do they use to handle large-scale data operations?                Complete the assignment and submit it.

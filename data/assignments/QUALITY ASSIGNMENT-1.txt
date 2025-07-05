@@ -1,0 +1,12 @@
+QUALITY ASSIGNMENT-1
+
+1. Write a python program to convert Celsius to Fahrenheit
+2. Write a python program to display the Calendar
+3. Write a python program to swap two variables
+4. Write a python program to find the area of a Triangle
+5. Write a python program to solve Quadratic Equations
+6. Write a python program to check whether the given string is Palindrome or not
+7. Write a python program to reverse words in a given string
+8. Write a python program to calculate the length of the string
+9. Write a python program to generate a random number
+10. Write a python program to display the Multiplication Table

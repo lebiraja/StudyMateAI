@@ -1,0 +1,10 @@
+CLASS TEST-1
+
+Dear Students,
+
+Write the programs for the collection framework, each with an example 
+Data Collection:
+1) LIst
+2)Tuple
+3) Set 
+4) Dictionary

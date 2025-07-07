@@ -177,3 +177,27 @@ Icon?
 # Assignment answers (if they should be private)
 data/assignment_answers/
 
+# Assignment folders and downloaded data
+data/assignments/
+data/materials/
+data/docs/
+data/pdfs/
+data/videos/
+
+# ChromaDB vector database
+chroma_db/
+
+# Other data files
+*.docx
+*.pdf
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.txt
+!requirements.txt
+!README.txt
+!setup.py
+!config.py
+!*.py
+

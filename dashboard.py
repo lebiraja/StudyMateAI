@@ -45,7 +45,7 @@ def main():
     st.sidebar.title("Navigation")
     page = st.sidebar.selectbox(
         "Choose a page",
-        ["Overview", "Assignments", "Q&A", "Document Manager", "Settings"]
+        ["Overview", "Assignments", "Q&A", "Document Manager", "Download Manager", "Settings"]
     )
     
     if page == "Overview":
@@ -56,6 +56,8 @@ def main():
         show_qa()
     elif page == "Document Manager":
         show_document_manager()
+    elif page == "Download Manager":
+        show_download_manager()
     elif page == "Settings":
         show_settings()
 
@@ -263,6 +265,18 @@ def show_document_manager():
                 
             except Exception as e:
                 st.error(f"Error uploading file: {e}")
+
+def show_download_manager():
+    st.header("📥 Download Manager")
+    
+    instructions = utils.create_download_instructions()
+    st.text_area("Manual Download Instructions", instructions, height=300)
+    
+    if st.button("✔️ Process Manual Downloads"):
+        results = utils.process_manual_downloads()
+        for name, result in results.items():
+            st.write(f"{name}: {result}")
+
 
 def show_settings():
     st.header("⚙️ Settings")

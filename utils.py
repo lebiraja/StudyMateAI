@@ -34,7 +34,7 @@ logging.basicConfig(
     level=getattr(logging, config.LOG_LEVEL),
     format=config.LOG_FORMAT,
     handlers=[
-        logging.FileHandler(config.LOGS_DIR / "studymateai.log"),
+        logging.FileHandler(config.LOGS_DIR / "studymateai.log", encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -324,4 +324,103 @@ Your answer should be complete and ready for submission. Do not ask for clarific
 Answer:"""
     
     return prompt
+
+def find_placeholder_files() -> List[Path]:
+    """
+    Find all placeholder files created for failed downloads
+    """
+    placeholder_files = []
+    for root, _, files in os.walk(config.DATA_DIR):
+        for file in files:
+            if file.endswith('_PLACEHOLDER.txt'):
+                placeholder_files.append(Path(root) / file)
+    return placeholder_files
+
+def process_manual_downloads() -> Dict[str, str]:
+    """
+    Process manually downloaded files and update placeholders
+    """
+    results = {}
+    placeholder_files = find_placeholder_files()
+    
+    for placeholder_path in placeholder_files:
+        try:
+            # Read placeholder content to get original filename
+            with open(placeholder_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # Extract original filename from placeholder
+            original_name = None
+            for line in content.split('\n'):
+                if line.startswith('Original filename:'):
+                    original_name = line.split(':', 1)[1].strip()
+                    break
+            
+            if original_name:
+                # Look for manually downloaded file
+                directory = placeholder_path.parent
+                safe_name = safe_filename(original_name)
+                
+                # Check common file extensions
+                for ext in ['.pdf', '.docx', '.txt', '.doc', '.ppt', '.pptx']:
+                    manual_file = directory / (safe_name + ext)
+                    if manual_file.exists():
+                        # Remove placeholder and note the successful manual download
+                        placeholder_path.unlink()
+                        results[original_name] = f"Found manually downloaded file: {manual_file}"
+                        logger.info(f"Manual download processed: {original_name}")
+                        break
+                else:
+                    results[original_name] = f"Placeholder exists but no manual download found: {placeholder_path}"
+            
+        except Exception as e:
+            logger.error(f"Error processing placeholder {placeholder_path}: {e}")
+            results[str(placeholder_path)] = f"Error processing: {e}"
+    
+    return results
+
+def create_download_instructions() -> str:
+    """
+    Create detailed instructions for manual downloads
+    """
+    placeholder_files = find_placeholder_files()
+    
+    if not placeholder_files:
+        return "No files need manual download. All files downloaded successfully!"
+    
+    instructions = "MANUAL DOWNLOAD INSTRUCTIONS\n" + "="*40 + "\n\n"
+    instructions += f"Found {len(placeholder_files)} files that need manual download:\n\n"
+    
+    for i, placeholder_path in enumerate(placeholder_files, 1):
+        try:
+            with open(placeholder_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # Extract details from placeholder
+            original_name = "Unknown"
+            web_link = "Not available"
+            target_path = str(placeholder_path.parent)
+            
+            for line in content.split('\n'):
+                if line.startswith('Original filename:'):
+                    original_name = line.split(':', 1)[1].strip()
+                elif line.startswith('Web View Link:'):
+                    web_link = line.split(':', 1)[1].strip()
+                elif line.startswith('Save the file to:'):
+                    target_path = line.split(':', 1)[1].strip()
+            
+            instructions += f"{i}. {original_name}\n"
+            instructions += f"   Web Link: {web_link}\n"
+            instructions += f"   Save to: {target_path}\n\n"
+            
+        except Exception as e:
+            instructions += f"{i}. Error reading placeholder: {placeholder_path}\n\n"
+    
+    instructions += "\nSteps to manually download:\n"
+    instructions += "1. Click on each web link above\n"
+    instructions += "2. In Google Drive, click 'File' → 'Download'\n"
+    instructions += "3. Save the file to the specified directory\n"
+    instructions += "4. Run the application again to process the downloaded files\n"
+    
+    return instructions
 

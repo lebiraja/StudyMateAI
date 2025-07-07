@@ -56,9 +56,10 @@ MAX_CONTEXT_CHUNKS = 3
 CHROMA_COLLECTION_NAME = "studymate_enhanced"
 CHROMA_PERSIST_DIRECTORY = str(DATA_DIR / "chroma_db")
 
-# Logging settings
+# Logging configuration
 LOG_LEVEL = "INFO"
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+LOG_ENCODING = "utf-8"
 
 # Create directories if they don't exist
 for dir_path in [DATA_DIR, ASSIGNMENT_ANSWERS_DIR, LOGS_DIR, *DOWNLOAD_DIRS.values()]:

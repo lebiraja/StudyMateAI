@@ -10,6 +10,9 @@ from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import chromadb
+import fitz
+from docx import Document
+from nltk.tokenize import sent_tokenize
 
 # Import our enhanced modules
 import config
@@ -46,7 +49,7 @@ def authenticate_google():
         raise StudyMateAIError(f"Failed to authenticate with Google: {e}")
 
 def download_file(service, file_id, file_name, mime_type, token):
-    """Enhanced file download with better error handling"""
+    """Enhanced file download with better error handling and alternatives"""
     try:
         directory = config.DOWNLOAD_DIRS.get(mime_type, config.DATA_DIR / 'materials')
         directory.mkdir(parents=True, exist_ok=True)
@@ -55,26 +58,107 @@ def download_file(service, file_id, file_name, mime_type, token):
         safe_name = utils.safe_filename(file_name)
         file_path = directory / (safe_name + ext)
 
-        if mime_type == 'application/vnd.google-apps.document':
-            request = service.files().export_media(
-                fileId=file_id,
-                mimeType='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-            )
-        else:
-            request = service.files().get_media(fileId=file_id)
+        # Check if file already exists
+        if file_path.exists():
+            logger.info(f"📄 File already exists: {safe_name + ext}")
+            console.print(f"📄 File already exists: {safe_name + ext}", style="yellow")
+            return
 
-        response = requests.get(request.uri, headers={"Authorization": f"Bearer {token}"})
-        response.raise_for_status()
+        # Method 1: Try direct download
+        success = False
+        try:
+            if mime_type == 'application/vnd.google-apps.document':
+                request = service.files().export_media(
+                    fileId=file_id,
+                    mimeType='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                )
+            else:
+                request = service.files().get_media(fileId=file_id)
+
+            response = requests.get(request.uri, headers={"Authorization": f"Bearer {token}"}, timeout=30)
+            response.raise_for_status()
+            
+            with open(file_path, 'wb') as f:
+                f.write(response.content)
+            
+            logger.info(f"📄 Downloaded: {safe_name + ext} to {directory}")
+            console.print(f"📄 Downloaded: {safe_name + ext}", style="green")
+            success = True
+            
+        except Exception as direct_error:
+            logger.warning(f"Direct download failed for {file_name}: {direct_error}")
+            
+            # Method 2: Try using Drive API's get method with alt=media
+            try:
+                file_metadata = service.files().get(fileId=file_id, fields='webContentLink,webViewLink,exportLinks').execute()
+                
+                # Try webContentLink first
+                if 'webContentLink' in file_metadata:
+                    download_url = file_metadata['webContentLink']
+                    response = requests.get(download_url, headers={"Authorization": f"Bearer {token}"}, timeout=30)
+                    response.raise_for_status()
+                    
+                    with open(file_path, 'wb') as f:
+                        f.write(response.content)
+                    
+                    logger.info(f"📄 Downloaded via webContentLink: {safe_name + ext}")
+                    console.print(f"📄 Downloaded via webContentLink: {safe_name + ext}", style="green")
+                    success = True
+                    
+                elif 'exportLinks' in file_metadata and mime_type == 'application/vnd.google-apps.document':
+                    # For Google Docs, try export links
+                    export_mime = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                    if export_mime in file_metadata['exportLinks']:
+                        export_url = file_metadata['exportLinks'][export_mime]
+                        response = requests.get(export_url, headers={"Authorization": f"Bearer {token}"}, timeout=30)
+                        response.raise_for_status()
+                        
+                        with open(file_path, 'wb') as f:
+                            f.write(response.content)
+                        
+                        logger.info(f"📄 Downloaded via export link: {safe_name + ext}")
+                        console.print(f"📄 Downloaded via export link: {safe_name + ext}", style="green")
+                        success = True
+                        
+            except Exception as alt_error:
+                logger.warning(f"Alternative download failed for {file_name}: {alt_error}")
         
-        with open(file_path, 'wb') as f:
-            f.write(response.content)
-        
-        logger.info(f"📄 Downloaded: {safe_name + ext} to {directory}")
-        console.print(f"📄 Downloaded: {safe_name + ext}", style="green")
+        # Method 3: Create a placeholder file with metadata if download fails
+        if not success:
+            try:
+                file_metadata = service.files().get(fileId=file_id, fields='name,mimeType,size,webViewLink,description').execute()
+                placeholder_content = f"""FILE DOWNLOAD FAILED
+===================
+
+Original filename: {file_name}
+File ID: {file_id}
+MIME Type: {mime_type}
+Web View Link: {file_metadata.get('webViewLink', 'Not available')}
+Description: {file_metadata.get('description', 'No description')}
+
+This file could not be downloaded automatically. You can:
+1. Access it directly via the web view link above
+2. Download it manually from Google Drive
+3. Check if you have proper permissions to access this file
+
+To manually download:
+1. Visit the web view link above
+2. Click "File" → "Download" in Google Drive
+3. Save the file to: {file_path}"""
+                
+                placeholder_path = directory / (safe_name + '_PLACEHOLDER.txt')
+                with open(placeholder_path, 'w', encoding='utf-8') as f:
+                    f.write(placeholder_content)
+                
+                logger.warning(f"📄 Created placeholder for failed download: {safe_name}_PLACEHOLDER.txt")
+                console.print(f"📄 Created placeholder for failed download: {safe_name}_PLACEHOLDER.txt", style="yellow")
+                
+            except Exception as placeholder_error:
+                logger.error(f"Failed to create placeholder for {file_name}: {placeholder_error}")
         
     except Exception as e:
-        logger.error(f"Failed to download {file_name}: {e}")
-        console.print(f"❌ Failed to download {file_name}: {e}", style="red")
+        logger.error(f"Complete download failure for {file_name}: {e}")
+        console.print(f"❌ Complete download failure for {file_name}: {e}", style="red")
 
 def fetch_all_materials(creds):
     classroom = build('classroom', 'v1', credentials=creds)

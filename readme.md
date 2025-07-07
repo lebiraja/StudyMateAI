@@ -12,7 +12,7 @@
 ✅ **Smart Document Processing** - Handles PDFs, DOCX, videos, images, and more  
 ✅ **Advanced Assignment Analysis** - Intelligent assignment retrieval and processing  
 ✅ **RAG-based Q&A System** - Context-aware question answering  
-✅ **Vector Database Storage** - Fast semantic search with ChromaDB  
+✅ **Vector Database Storage** - Fast semantic search with ChromaDB   
 ✅ **Local LLM Processing** - Privacy-focused AI with Ollama integration  
 ✅ **Assignment Auto-Solving** - Complete assignment generation with enhanced prompts  
 ✅ **Automatic Submission** - Direct submission to Google Classroom  

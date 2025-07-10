@@ -7,7 +7,7 @@ from rich.console import Console
 from rich.table import Table
 
 console = Console()
-
+ 
 def test_imports():
     """Test if all modules can be imported"""
     console.print("🧪 Testing module imports...", style="blue")
